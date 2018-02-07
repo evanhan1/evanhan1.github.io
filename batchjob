@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#SBATCH --time=01:00:00   # walltime
+#SBATCH --nodes=2	  # number of nodes
+#SBATCH --cpus-per-task=24  # number of processor cores (i.e. tasks)
+#SBATCH --mem=128G
+
+# Compatibility variables for PBS. Delete if not needed.
+export PBS_O_WORKDIR="$SLURM_SUBMIT_DIR"
+
+# LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+
+cd $PBS_O_WORKDIR
+module unload mkl/11.1.2
+module load mkl/11.2.0
+module unload compiler_intel/14.0.2
+module load compiler_intel/15.0.3
+module unload mpi/openmpi-1.8.4_gnu-4.9.2
+module load mpi/impi-5.0.3.048_intel-15.0.3
+
+
+for input in \
+0000 0001
+
+do
+    mpirun -np 2 ./lmp_linux -var file $input -in map.in.md > $input.txt
+done
+
+exit 0
